@@ -9,7 +9,7 @@ import math
 import datetime
 import pandas as pd
 
-ANA_database = pd.DataFrame()
+flight_database = pd.DataFrame()
 
 depart_list = ["12/01/2016", "12/02/2016", "12/03/2016", "12/04/2016", "12/05/2016", "12/06/2016", "12/07/2016"]
 arrive_list = ["01/05/2017", "01/06/2017", "01/06/2017", "01/06/2017", "01/09/2017", "01/11/2017", "01/12/2017"]
@@ -60,12 +60,12 @@ for fill_depart, fill_arrive in zip(depart_list, arrive_list):
     p = pd.DataFrame(d)
     p.columns = ['carrier', 'departure date', 'arrive date', 'departure time', 'arrive time', 'Next day', 'flight_time',
                  'list_price']
-    ANA = p[p.carrier == "All Nippon Airways"]
-    ANA_database = ANA_database.append(ANA)
-    print(ANA_database)
+    # ANA = p[p.carrier == "All Nippon Airways"]
+    flight_database = flight_database.append(p)
+    print(flight_database)
     driver.close()
 
 
 writer = pd.ExcelWriter("C:/Users/jchen5/Downloads/ANA.xlsx")
-ANA_database.to_excel(writer, "sheet1", index=False)
+flight_database.to_excel(writer, "sheet1", index=False)
 writer.save()
