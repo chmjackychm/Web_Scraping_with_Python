@@ -30,8 +30,27 @@ print(alltext[0].get_text())
 #caveat
 soup.findAll("",{"class":"green"})
 
+# Navigating Trees
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 
+html = urlopen("http://www.pythonscraping.com/pages/page3.html")
+soup = BeautifulSoup(html)
 
+for child in soup.find("table", {"id": "giftList"}).children:
+    print(child)
+# children are always exactly one tag below a parent, whereas descendants can be at any level in
+# the tree below a parent.
 
+# This code prints out the list of product rows in the giftList table. If you were to
+# write it using the descendants() function instead of the children() function, about
+# two dozen tags would be found within the table and printed, including img tags, span
+# tags, and individual td tags.
 
+for descendant in soup.find("table", {"id": "giftList"}).descendants:
+    print(descendant)
 
+# for sibling in soup.find("table",{'id':'giftList'}).tr.next_siblings:
+#     print(sibling)
+
+print(soup.find("img", {"src": "../img/gifts/img1.jpg"}).parent.previous_sibling.get_text())
