@@ -31,6 +31,7 @@ for day in range(1, 10):
             "%m/%d/%Y") + "TANYT&passengers=children:0,adults:1,seniors:0,infantinlap:Y&mode=search"
         driver.get(home_page)
         driver.implicitly_wait(500)
+        time.sleep(5)
         # choose only hotel
 
         soup = BeautifulSoup(driver.page_source)
@@ -60,12 +61,14 @@ for day in range(1, 10):
                      dtype=object)
         d = list(map(list, zip(*x)))
 
-        # choose only ANA
+
         p = pd.DataFrame(d)
         p.columns = ['carrier', 'departure date', 'arrive date', 'departure time', 'arrive time', 'Next day',
                      'flight_time',
                      'list_price']
+        # choose only ANA
         # ANA = p[p.carrier == "All Nippon Airways"]
+        print("Expedia found: " + str(len(p.index)) + " lines")
         flight_database = flight_database.append(p)
         # print(flight_database)
         driver.close()
