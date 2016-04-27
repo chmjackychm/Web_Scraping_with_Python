@@ -7,6 +7,8 @@
 # imageLocation = soup.find("a",{"id":"logo"}).find("img")["src"]
 # urlretrieve(imageLocation,"logo.jpg")
 
+
+# download image
 import os
 from urllib.request import urlretrieve
 from urllib.request import urlopen
@@ -51,3 +53,25 @@ for download in downloadList:
         print(fileUrl)
 
 urlretrieve(fileUrl, getDownloadPath(baseUrl, fileUrl, downloadDirectory))
+
+# store data to csv
+import csv
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+html = urlopen('https://en.wikipedia.org/wiki/Comparison_of_text_editors')
+soup = BeautifulSoup(html)
+table = soup.findAll('table', {'class': 'wikitable'})[0]
+rows = table.findAll('tr')
+
+csvFile = open('C:/Users/jchen5/python/Web Scraping with Python/editors.csv', 'wt')
+writer = csv.writer(csvFile)
+
+try:
+    for row in rows:
+        csvRow = []
+        for cell in row.findAll(['td', 'th']):
+            csvRow.append(cell.get_text())
+            writer.writerow(csvRow)
+finally:
+    csvFile.close()
