@@ -12,7 +12,10 @@ from pandas.tseries.offsets import BDay
 
 flight_database = pd.DataFrame()
 
-for day in range(1, 10):
+path = 'C:/Users/jchen5/Downloads/phantomjs-2.1.1-windows/bin/phantomjs.exe'
+# driver = webdriver.PhantomJS(executable_path=path)
+
+for day in range(1, 32):
     fill_depart = datetime.date(2016, 12, day)
     fill_arrive = fill_depart + BDay(25)
     print(fill_depart.strftime("%m/%d/%Y"), "  ", fill_arrive.strftime("%m/%d/%Y"))
@@ -23,7 +26,8 @@ for day in range(1, 10):
     # duration = []
     # list_price = []
     try:
-        driver = webdriver.Firefox()
+        # driver = webdriver.Firefox()
+        driver = webdriver.PhantomJS(executable_path=path)
     # driver.maximize_window()
         driver.set_page_load_timeout(500)
         home_page = "https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:IAD,to:SHA,departure:" + fill_depart.strftime(
@@ -31,7 +35,7 @@ for day in range(1, 10):
             "%m/%d/%Y") + "TANYT&passengers=children:0,adults:1,seniors:0,infantinlap:Y&mode=search"
         driver.get(home_page)
         driver.implicitly_wait(500)
-        time.sleep(5)
+        time.sleep(.5)
         # choose only hotel
 
         soup = BeautifulSoup(driver.page_source)
@@ -74,6 +78,12 @@ for day in range(1, 10):
         driver.close()
     except:
         continue
+
+for price in flight_database['list_price']:
+    price = price.strip()
+    price = price.replace("$", "")
+    price = price.replace(",", "")
+    price = float(price)
 
 writer = pd.ExcelWriter("C:/Users/jchen5/Downloads/ANA.xlsx")
 flight_database.to_excel(writer, "sheet1", index=False)
