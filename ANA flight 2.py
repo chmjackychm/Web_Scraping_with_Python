@@ -75,6 +75,7 @@ for day in range(1, 32):
             print("Expedia found: " + str(len(p.index)) + " lines")
             flight_database = flight_database.append(p)
             # print(flight_database)
+            # driver.delete_all_cookies()
             driver.close()
         except:
             continue
