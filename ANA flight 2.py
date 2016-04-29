@@ -15,7 +15,7 @@ flight_database = pd.DataFrame()
 path = 'C:/Users/jchen5/Downloads/phantomjs-2.1.1-windows/bin/phantomjs.exe'
 # driver = webdriver.PhantomJS(executable_path=path)
 
-for day in range(1, 32):
+for day in range(1, 11):
     for flexiable_date in range(6):
         fill_depart = datetime.date(2016, 12, day)
         fill_arrive = fill_depart + BDay(20 + flexiable_date)
@@ -30,15 +30,20 @@ for day in range(1, 32):
             # driver = webdriver.Firefox()
             driver = webdriver.PhantomJS(executable_path=path)
             # driver.maximize_window()
-            driver.set_page_load_timeout(50)
+            driver.set_page_load_timeout(500)
             home_page = "https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from:IAD,to:SHA,departure:" + fill_depart.strftime(
                 "%m/%d/%Y") + "TANYT&leg2=from:SHA,to:IAD,departure:" + fill_arrive.strftime(
                 "%m/%d/%Y") + "TANYT&passengers=children:0,adults:1,seniors:0,infantinlap:Y&mode=search"
             driver.get(home_page)
-            driver.implicitly_wait(10)
-            time.sleep(5)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-            soup = BeautifulSoup(driver.page_source)
+            driver.implicitly_wait(20)
+            time.sleep(2)
+
+            soup = BeautifulSoup(driver.page_source, "html.parser")  # add "html.parser" to get rid of warning
 
             airline = soup.findAll("div", {"class": "secondary truncate"})
             depature = soup.findAll("span", {"class": "departure-time departure-emphasis"})
@@ -46,7 +51,7 @@ for day in range(1, 32):
             next = soup.findAll("span", {"class": "next-day"})
             flight_time = soup.findAll("div", {"class": "primary duration-emphasis"})
             price = soup.findAll('div', {"class": "price-button-wrapper"})
-
+            #list comprehension to save information
             carrier = [company.text.strip() for company in airline]
             departure_time = [d.text.strip() for d in depature]
             arrive_time = [a.text.strip() for a in arrive]
@@ -75,17 +80,17 @@ for day in range(1, 32):
             print("Expedia found: " + str(len(p.index)) + " lines")
             flight_database = flight_database.append(p)
             # print(flight_database)
-            # driver.delete_all_cookies()
+            driver.delete_all_cookies()
             driver.close()
         except:
             continue
 
-for price in flight_database['list_price']:
-    price = price.strip()
-    price = price.replace("$", "")
-    price = price.replace(",", "")
-    price = float(price)
+flight_database['list_price'] = flight_database['list_price'].str.replace("$", "")
+flight_database['list_price'] = flight_database['list_price'].str.replace(",", "")
+flight_database['list_price'] = flight_database['list_price'].str.strip()
+pd.to_numeric(flight_database['list_price'], errors='ignore')
 
+flight_database = pd.DataFrame.drop_duplicates(flight_database)
 writer = pd.ExcelWriter("C:/Users/jchen5/Downloads/ANA.xlsx")
 flight_database.to_excel(writer, "sheet1", index=False)
 writer.save()
