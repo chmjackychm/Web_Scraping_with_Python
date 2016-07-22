@@ -35,12 +35,12 @@ def get_movie():
     # search filter
     print(driver.current_url)
     num = int(input("how many you want to see? "))
-    print ("--------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------")
     kind = input(
         "1-Hot\n2-Douban Guess\n3-Newest\n4-Classics\n5-Playable\n6-High Scores\n7-Wonderful but not popular\n8-Chinese film\n9-Hollywood\n10-Korea\n11-Japan\n12-Action movies\n13-Comedy\n14-Love story\n15-Science fiction\n16-Thriller\n17-Horror film\n18-Cartoon\nplease select:")
-    print ("--------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------")
     sort = input("How do you want to sort it?\n1-Hot\n2-Time\n3-Rate\n")
-    print ("--------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------")
     print('\n')
     print(today.strftime("Data is scraped at: %A %d/%B/%Y"))
     print('\n...crawling now...')
